@@ -17,7 +17,6 @@ class AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
           leading: CupertinoButton(
             child: Icon(
               Icons.menu,
@@ -25,6 +24,7 @@ class AboutPageState extends State<AboutPage> {
             ),
             onPressed:(){ ScaffoldState().openDrawer(); }
           ),
+          backgroundColor: Colors.white,
           title: CustomTitle(text: "Acerca de")
         ),
         drawer: SideMenu()        

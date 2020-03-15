@@ -17,7 +17,6 @@ class CalculatorPageState extends State<CalculatorPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
           leading: CupertinoButton(
             child: Icon(
               Icons.menu,
@@ -25,6 +24,7 @@ class CalculatorPageState extends State<CalculatorPage> {
             ),
             onPressed:(){ ScaffoldState().openDrawer(); }
           ),
+          backgroundColor: Colors.white,
           title: CustomTitle(text: "Calculadora")
         ),
         drawer: SideMenu()        
