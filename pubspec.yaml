@@ -9,7 +9,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   table_calendar: ^2.2.2
   file_picker: ^1.4.2
-  spreadsheet_decoder: ^1.1.0
+  excel: ^1.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -17,7 +17,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/png/logo.png
-
+    - assets/pdf/test.xlsx
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a

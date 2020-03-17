@@ -102,9 +102,10 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
   }
 
   openDocument() async {
-    this.setState(() async {
-      _document = await FilePicker.getFile();      
-    });
+    //this.setState(() async {
+      //*_document = await FilePicker.getFile();
+      Navigator.pushNamed(context, "crear_step_one");
+    //});
   }
 
 
