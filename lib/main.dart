@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:poliplanner/core/xls-manager.dart';
 import 'package:poliplanner/pages/about_page.dart';
 import 'package:poliplanner/pages/calculator_page.dart';
 import 'package:poliplanner/pages/calendar_page.dart';
@@ -29,6 +32,7 @@ class _MyAppState extends State<MyApp> {
   List<Carrera> _carrerasSeleccionadas;  
   List<Semestre> _semestres;
   List<Asignatura> _asignaturas;
+  Map<String, List<Asignatura>> _horario;
   File _file;
 
   @override
@@ -38,6 +42,8 @@ class _MyAppState extends State<MyApp> {
     this._semestres = List();
     this._asignaturas = List();
     this._file = null;
+    this.load();
+    super.initState();
   }
 
   @override
@@ -45,17 +51,43 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       initialRoute: "home",
       routes: {
-        "home": (context) => HomePage(updateFile),
+        "home": (context) => HomePage(updateFile, _horario),
         "calendar" : (context) => CalendarioPage(),
         "sections" : (context) => SectionsPage(),
         "calculator" : (context) => CalculatorPage(),
         "about" : (context) => AboutPage(),
         "crear_step_one" : (context) => CrearStepOne(_file, updateCarreras, seleccionarCarreras),
         "crear_step_two" : (context) => CrearStepTwo(_file, _carrerasSeleccionadas, updateSemestres),
-        "crear_step_three" : (context) => CrearStepThree(_asignaturas)
+        "crear_step_three" : (context) => CrearStepThree(_asignaturas, save)
       },
       debugShowCheckedModeBanner: false
     );
+  }
+
+  save(List<Asignatura> asignaturas){
+    XlsManager manager = XlsManager();
+    manager.save(asignaturas);
+    load();
+  }
+
+  load() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = directory.path; 
+    File loaded = File('$path/data_poliplanner.json');
+    String content = await loaded.readAsString();
+    print(content);
+    this.setState(() {
+      Map<String, dynamic> map = jsonDecode(content);      
+      Map<String, List<Asignatura>> aux = Map();
+      map.forEach((key, value) {
+        print(key);
+        print(value);
+        List<dynamic> listOfAsignatures = value;
+        List<Asignatura> a = listOfAsignatures.map((e) => Asignatura.fromJson(e)).toList();
+        aux.putIfAbsent(key, () => a);
+      });
+      _horario = aux;
+    });
   }
 
   updateFile(file){
@@ -66,7 +98,11 @@ class _MyAppState extends State<MyApp> {
 
   updateCarreras(carreras){
     this.setState(() {
-      this._carreras = carreras;      
+      for(Carrera carrera in carreras){
+        if(!this._carreras.contains(carrera)){
+          this._carreras.add(carrera);
+        }
+      }
     });
   }
 

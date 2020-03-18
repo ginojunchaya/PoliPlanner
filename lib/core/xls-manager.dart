@@ -255,7 +255,7 @@ class XlsManager {
           if(seccion.selected){
             Map<String, String> horarios = seccion.horarios;
             horarios.forEach((key, value) {
-              if(key == dia){
+              if(key.compareTo(dia) == 0){
                 if(value != null){
                   Asignatura asignaturaOK = Asignatura();
                   asignaturaOK.selected = true;
@@ -265,10 +265,10 @@ class XlsManager {
                   valueList.add(asignaturaOK);
                   return;
                 }
-              }            
+              }
             });
+            break;
           }
-          break;          
         }
       }
       horariosMap.putIfAbsent(dia, () => valueList);
@@ -276,11 +276,8 @@ class XlsManager {
     final directory = await getApplicationDocumentsDirectory();
     final path = directory.path;
     File file = File('$path/data_poliplanner.json');
-    print(path);
+    print("\nTO SAVE: $horariosMap\n");
     file.writeAsString(jsonEncode(horariosMap));
-  }
-
-  load(){    
   }
 
 }

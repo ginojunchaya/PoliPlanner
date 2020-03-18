@@ -9,8 +9,9 @@ import 'package:poliplanner/widgets/title.dart';
 
 class CrearStepThree extends StatefulWidget {
 
-  const CrearStepThree(List<Asignatura> asignaturas) : this.asignaturas = asignaturas;
+  const CrearStepThree(List<Asignatura> asignaturas, Function(List<Asignatura>) save) : this.asignaturas = asignaturas, this.save = save;
   final List<Asignatura> asignaturas;
+  final Function(List<Asignatura> asignaturas) save;
 
   @override
   CrearStepThreeState createState() => CrearStepThreeState();
@@ -105,8 +106,7 @@ class CrearStepThreeState extends State<CrearStepThree> {
 
   next(){
     //save
-    XlsManager manager = XlsManager();
-    manager.save(asignaturas);
+    widget.save(asignaturas);
     Navigator.pushReplacementNamed(context, "home");
   }
 
