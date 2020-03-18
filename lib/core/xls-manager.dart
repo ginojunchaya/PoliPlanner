@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:excel/excel.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:poliplanner/model/Asignatura.dart';
 import 'package:poliplanner/model/Carrera.dart';
 import 'package:poliplanner/model/Docente.dart';
@@ -27,7 +29,8 @@ class XlsManager {
     print(this.decoder.tables);
   }
 
-  List<Semestre> getSemesters(Excel decoder, Carrera carrera){
+  List<Semestre> getSemesters(Carrera carrera){
+    if(this.decoder == null){ throw Exception("No se ha cargado el archivo"); }
     List<dynamic> rows = decoder.tables[carrera.codigo].rows;
     rows = rows.sublist(11);
     List<Semestre> semestres = List();
@@ -241,5 +244,43 @@ class XlsManager {
   }
 
   bool isLoaded() => decoder == null ? false : true;
+
+  save(List<Asignatura> asignaturas) async {
+    const List<String> dias = ["LUNES", "MARTES", "MIÉRCOLES", "JUEVES", "VIERNES", "SÁBADO"];
+    Map<String, List<Asignatura>> horariosMap = Map();
+    for(String dia in dias){
+      List<Asignatura> valueList = List();
+      for(Asignatura asignatura in asignaturas){
+        for(Seccion seccion in asignatura.secciones){
+          if(seccion.selected){
+            Map<String, String> horarios = seccion.horarios;
+            horarios.forEach((key, value) {
+              if(key == dia){
+                if(value != null){
+                  Asignatura asignaturaOK = Asignatura();
+                  asignaturaOK.selected = true;
+                  asignaturaOK.nombre = asignatura.nombre;
+                  asignaturaOK.secciones = List();
+                  asignaturaOK.secciones.add(seccion);
+                  valueList.add(asignaturaOK);
+                  return;
+                }
+              }            
+            });
+          }
+          break;          
+        }
+      }
+      horariosMap.putIfAbsent(dia, () => valueList);
+    }
+    final directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
+    File file = File('$path/data_poliplanner.json');
+    print(path);
+    file.writeAsString(jsonEncode(horariosMap));
+  }
+
+  load(){    
+  }
 
 }

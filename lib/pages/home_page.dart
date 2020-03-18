@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -9,11 +8,12 @@ import 'package:poliplanner/widgets/title.dart';
 
 class HomePage extends StatefulWidget {
 
-  const HomePage({ Key key }) : super(key: key);
+  final Function(File) updateFile;
+
+  const HomePage(void Function(File) updateFile) : updateFile = updateFile;
 
   @override
   HomePageState createState() => HomePageState();
-
 }
 
 class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
@@ -28,62 +28,49 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
   ];
 
   TabController _tabController;
-  File _document;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _tabController = TabController(length: myTabs.length, vsync: this);
   }
 
- @override
- void dispose() {
-   _tabController.dispose();
-   super.dispose();
- }  
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: CupertinoButton(
-          child: Icon(
-            Icons.menu,
-            color: Colors.black87
-          ),
-          onPressed:(){ ScaffoldState().openDrawer(); }
-        ),
+            child: Icon(Icons.menu, color: Colors.black87),
+            onPressed: () {
+              ScaffoldState().openDrawer();
+            }),
         actions: <Widget>[
           CupertinoButton(
-            child: Icon(
-              Icons.refresh,
-              color: Colors.black54
-            ),
-            onPressed: (){},
+            child: Icon(Icons.refresh, color: Colors.black54),
+            onPressed: () {},
           ),
           CupertinoButton(
-            child: Icon(
-              Icons.file_upload,
-              color: Colors.black54
-            ),
+            child: Icon(Icons.file_upload, color: Colors.black54),
             onPressed: this.openDocument,
           ),
           CupertinoButton(
-            child: Icon(
-              Icons.settings,
-              color: Colors.black54
-            ),
-            onPressed: (){},
-          ),                    
+            child: Icon(Icons.settings, color: Colors.black54),
+            onPressed: () {},
+          ),
         ],
         backgroundColor: Colors.white,
         title: CustomTitle(text: "PoliPlanner"),
         bottom: TabBar(
-          isScrollable: true,
-          labelColor: Colors.black87,
-          controller: _tabController,
-          tabs: myTabs
-        ),          
+            isScrollable: true,
+            labelColor: Colors.black87,
+            controller: _tabController,
+            tabs: myTabs),
       ),
       drawer: SideMenu(),
       body: TabBarView(
@@ -102,11 +89,9 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
   }
 
   openDocument() async {
-    //this.setState(() async {
-      //*_document = await FilePicker.getFile();
-      Navigator.pushNamed(context, "crear_step_one");
-    //});
+    File file = await FilePicker.getFile();
+    widget.updateFile(file);
+    Navigator.pushNamed(context, "crear_step_one");
   }
-
-
+  
 }
